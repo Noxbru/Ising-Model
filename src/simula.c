@@ -23,6 +23,7 @@
 typedef struct _input_data 
 {
     char dir[20];
+    unsigned int lat_size;
     double beta;
     unsigned int rand_init;
     char flag;
@@ -45,7 +46,6 @@ int main(int argc, const char *argv[])
     unsigned int acept;
 
     lattice a;
-    unsigned int lat_size=16;
 
     //double energy, magnet;
 
@@ -60,13 +60,13 @@ int main(int argc, const char *argv[])
     else
         pr_srand(input.rand_init);
 
-    a=create_lattice(lat_size,input.flag);
+    a=create_lattice(input.lat_size,input.flag);
     print_lattice(a);
 
     output.energy_ptr=malloc(input.num_meas*sizeof(double));
     output.magnet_ptr=malloc(input.num_meas*sizeof(double));
 
-    sprintf(command,"mkdir -p %s%u/%.2lf/",input.dir,lat_size,input.beta);
+    sprintf(command,"mkdir -p %s%u/%.2lf/",input.dir,input.lat_size,input.beta);
     system(command);
 
     for(i = 0; i < input.num_files; i++)
@@ -84,7 +84,7 @@ int main(int argc, const char *argv[])
             lattice_data(a,&output.energy_ptr[j],&output.magnet_ptr[j]);
         }
         printf("%lf\n",(double)acept/input.num_meas/input.num_sweeps/256);
-        out_data(input,lat_size,output,i);
+        out_data(input,output,i);
     }
 
     return 0;
@@ -96,6 +96,7 @@ input_data init_data()
     FILE *fin;
     fin=fopen("init.cfg","r");
     fscanf(fin,"%s\n",dat.dir);
+    fscanf(fin,"%u\n",&dat.lat_size);
     fscanf(fin,"%lf\n",&dat.beta);
     fscanf(fin,"%u\n",&dat.rand_init);
     fscanf(fin,"%c\n",&dat.flag);
@@ -106,10 +107,10 @@ input_data init_data()
     return dat;
 }
 
-void out_data(input_data inp, unsigned int lat_size, output_data out, unsigned int i)
+void out_data(input_data inp, output_data out, unsigned int i)
 {
     FILE *fout;
-    sprintf(out.file_name,"%s/%u/%.2lf/%03u",inp.dir,lat_size,inp.beta,i);
+    sprintf(out.file_name,"%s/%u/%.2lf/%03u",inp.dir,inp.lat_size,inp.beta,i);
     fout=fopen(out.file_name,"wt");
     fwrite(out.energy_ptr,sizeof(double),inp.num_meas,fout);
     fwrite(out.magnet_ptr,sizeof(double),inp.num_meas,fout);

@@ -120,17 +120,19 @@ double lattice_magnetization(lattice cristal)
 void lattice_data(lattice cristal, double *energy, double *magnet)
 {
     unsigned int i, j;
+    unsigned int size2=cristal.size*cristal.size;
     char *now=cristal.lambda;
-    *energy=0;
-    *magnet=0;
+    long int ener=0;
+    long int magn=0;
 
     for(i = 0; i < cristal.size; i++)
         for(j = 0; j < cristal.size; j++, now++)
         {
-            *energy+=*now*(*(now+cristal.offset_x[j])+*(now+cristal.offset_y[i]));
-            *magnet+=*now;
+            ener+=*now*(*(now+cristal.offset_x[j])+*(now+cristal.offset_y[i]));
+            magn+=*now;
         }
-    
+    *energy=(double)ener/size2/2;
+    *magnet=(double)magn/size2;
 }
 
 unsigned int evolve_lattice(lattice *cristal, double beta)
@@ -145,7 +147,7 @@ unsigned int evolve_lattice(lattice *cristal, double beta)
     for(i = 0; i < cristal->size; i++)
         for(j = 0; j < cristal->size; j++, now++)
         {
-            energy_change=2*(*(now+cristal->offset_x[j])+
+            energy_change=2*(*now)*(*(now+cristal->offset_x[j])+
                              *(now+cristal->offset_y[i])+
                              *(now+cristal->offset2_x[j])+
                              *(now+cristal->offset2_y[i]));
