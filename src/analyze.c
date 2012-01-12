@@ -18,12 +18,16 @@ int main(int argc, const char *argv[])
 {
     /* Declaration of the variables needed */
     // dummy index and some data
-    unsigned int i,j,k;
+    unsigned int i,j,k,l;
     unsigned int num_blocks;
     unsigned int num_data;
     unsigned int size2;
     
     // energy, magnetization, specific heat and susceptibility
+    // energy is the energy at each moment, same for magnet
+    // heat is the specific heat at each block, same for suscept
+    // energy_mean is the mean of the values of energy,
+    //      same for magnet, heat and suscept
     double       energy,        magnet,         heat,       suscept;
     double       energy_mean,   magnet_mean,    heat_mean,  suscept_mean;
     double       energy_mean2,  magnet_mean2;
@@ -42,9 +46,12 @@ int main(int argc, const char *argv[])
     input_data input;
     input=init_data();
 
+    //for(l=input.block_size;l<400;l++)
+    //{
     size2=input.lat_size*input.lat_size;
     num_data=(input.num_files-input.num_files_jump)*input.num_meas;
     num_blocks=num_data/input.block_size;
+    num_data=num_blocks*input.block_size; // If we don't recalculate num_data, we can have problems dividing
 
     energy_ptr=malloc(num_data*sizeof(double));
     energy_hist=calloc(200,sizeof(unsigned int));
@@ -54,6 +61,11 @@ int main(int argc, const char *argv[])
 
     for(i = input.num_files_jump; i < input.num_files; i++)
     {
+        printf("%s\n",input.dir);
+        printf("%u\n",input.lat_size);
+        printf("%.2lf\n",input.beta); /* este peta cuando i = input.num_files - input.num_files_jump */
+        printf("%03u\n",i);
+        printf("%s%u/%.2lf/%03u\n",input.dir,input.lat_size,input.beta,i);
         sprintf(file_name,"%s%u/%.2lf/%03u",input.dir,input.lat_size,input.beta,i);
         fin=fopen(file_name,"r");
         fread(energy_ptr+i*input.num_meas,sizeof(double),input.num_meas,fin);
@@ -107,8 +119,8 @@ int main(int argc, const char *argv[])
         magnet_mean_block/=input.block_size;
         magnet_mean2_block/=input.block_size;
 
-        energy_var+=energy_mean2_block;
-        magnet_var+=magnet_mean2_block;
+        energy_var+=energy_mean_block*energy_mean_block;
+        magnet_var+=magnet_mean_block*magnet_mean_block;
 
         heat=2*size2*(energy_mean2_block-energy_mean_block*energy_mean_block);
         suscept=size2*(magnet_mean2_block-magnet_mean_block*magnet_mean_block);
@@ -134,11 +146,17 @@ int main(int argc, const char *argv[])
     suscept_mean_block/=num_blocks;
     suscept_mean2_block/=num_blocks;
 
-    printf(" <E>  = %g ± %g\n",energy_mean,(energy_var-energy_mean*energy_mean)/sqrt(num_blocks));
-    printf("<|m|> = %g ± %g\n",magnet_mean,(magnet_var-magnet_mean*magnet_mean)/sqrt(num_blocks));
-    printf(" <Cv> = %g ± %g\n",heat_mean,(heat_mean2_block-heat_mean_block*heat_mean_block)/sqrt(num_blocks));
-    printf(" <X>  = %g ± %g\n",suscept_mean,(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
+    printf(" <E>  = %g ± %g\n",energy_mean,sqrt((energy_var-energy_mean*energy_mean)/num_blocks));
+    printf("<|m|> = %g ± %g\n",magnet_mean,sqrt((magnet_var-magnet_mean*magnet_mean)/num_blocks));
+    printf(" <Cv> = %g ± %g\n",heat_mean,sqrt((heat_mean2_block-heat_mean_block*heat_mean_block)/num_blocks));
+    printf(" <X>  = %g ± %g\n",suscept_mean,sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
 
+    //printf("%u %g %g %g %g\n",l,sqrt(energy_var-energy_mean*energy_mean)/sqrt(num_blocks),sqrt(magnet_var-magnet_mean*magnet_mean)/sqrt(num_blocks),
+    //                          sqrt(heat_mean2_block-heat_mean_block*heat_mean_block)/sqrt(num_blocks),
+    //                          sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
+    //}
+
+    //print_data(input,energy_ptr,energy_hist,magnet_ptr,magnet_hist);
 
     return 0;
 }
