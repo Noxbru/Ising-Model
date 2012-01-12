@@ -60,6 +60,10 @@ int main(int argc, const char *argv[])
 
     num_data=num_blocks*input.block_size; // If we don't recalculate num_data, we can have problems dividing
 
+    //===================================
+    for(input.beta=0.1;input.beta<2;input.beta+=0.1)
+    {
+    
     for(i = input.num_files_jump; i < input.num_files; i++)
     {
         /*printf("%s\n",input.dir);
@@ -153,10 +157,12 @@ int main(int argc, const char *argv[])
     printf(" <Cv> = %g ± %g\n",heat_mean,sqrt((heat_mean2_block-heat_mean_block*heat_mean_block)/num_blocks));
     printf(" <X>  = %g ± %g\n",suscept_mean,sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
 */
+    printf("%lf ",input.beta);
     printf(" %g %g\t",energy_mean,sqrt((energy_var-energy_mean*energy_mean)/num_blocks));
     printf(" %g %g\t",magnet_mean,sqrt((magnet_var-magnet_mean*magnet_mean)/num_blocks));
     printf(" %g %g\t",heat_mean,sqrt((heat_mean2_block-heat_mean_block*heat_mean_block)/num_blocks));
     printf(" %g %g\n",suscept_mean,sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
+    }
 
     //printf("%u %g %g %g %g\n",l,sqrt(energy_var-energy_mean*energy_mean)/sqrt(num_blocks),sqrt(magnet_var-magnet_mean*magnet_mean)/sqrt(num_blocks),
     //                          sqrt(heat_mean2_block-heat_mean_block*heat_mean_block)/sqrt(num_blocks),

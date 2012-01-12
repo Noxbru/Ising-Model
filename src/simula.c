@@ -45,8 +45,6 @@ int main(int argc, const char *argv[])
     unsigned int i,j,k;
     unsigned int acept;
 
-    double probs[5];
-
     lattice a;
 
     //double energy, magnet;
@@ -62,17 +60,14 @@ int main(int argc, const char *argv[])
     else
         pr_srand(input.rand_init);
 
-    probs[0]=exp(input.beta*8);
-    probs[1]=exp(input.beta*4);
-    probs[2]=1;
-    probs[3]=exp(-input.beta*4);
-    probs[4]=exp(-input.beta*8);
-
     a=create_lattice(input.lat_size,input.flag);
     print_lattice(a);
 
     output.energy_ptr=malloc(input.num_meas*sizeof(double));
     output.magnet_ptr=malloc(input.num_meas*sizeof(double));
+
+    for(input.beta=0.1;input.beta<2;input.beta+=0.1)
+    {
 
     sprintf(command,"mkdir -p %s%u/%.2lf/",input.dir,input.lat_size,input.beta);
     system(command);
@@ -83,7 +78,7 @@ int main(int argc, const char *argv[])
         for(j = 0; j < input.num_meas; j++)
         {
             for(k = 0; k < input.num_sweeps; k++)
-                acept+=evolve_lattice(&a,probs);
+                acept+=evolve_lattice(&a,input.beta);
 
             //energy=lattice_energy(a);
             //magnet=lattice_magnetization(a);
@@ -91,8 +86,9 @@ int main(int argc, const char *argv[])
             //output.magnet_ptr[j]=magnet;
             lattice_data(a,&output.energy_ptr[j],&output.magnet_ptr[j]);
         }
-        printf("%lf\n",(double)acept/input.num_meas/input.num_sweeps/256);
+        //printf("%lf\n",(double)acept/input.num_meas/input.num_sweeps/256);
         out_data(input,output,i);
+    }
     }
 
     return 0;
