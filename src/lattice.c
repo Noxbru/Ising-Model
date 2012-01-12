@@ -135,7 +135,7 @@ void lattice_data(lattice cristal, double *energy, double *magnet)
     *magnet=(double)magn/size2;
 }
 
-unsigned int evolve_lattice(lattice *cristal, double beta)
+unsigned int evolve_lattice(lattice *cristal, double *probs)
 {
     unsigned int i,j;
     unsigned int acept;
@@ -151,7 +151,7 @@ unsigned int evolve_lattice(lattice *cristal, double beta)
                              *(now+cristal->offset_y[i])+
                              *(now+cristal->offset2_x[j])+
                              *(now+cristal->offset2_y[i]));
-            change_probability=exp(-beta*energy_change);
+            change_probability=probs[(int)(energy_change/4+2)];
 
             if(change_probability>=1)
             {

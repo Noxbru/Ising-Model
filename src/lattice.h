@@ -35,7 +35,7 @@ typedef struct _lattice
 lattice create_lattice(unsigned int size, char flag);
 void reset_lattice(lattice *cristal);
 void print_lattice(lattice cristal);
-unsigned int evolve_lattice(lattice *cristal, double beta); 
+unsigned int evolve_lattice(lattice *cristal, double *probs); 
 double lattice_energy(lattice cristal);
 double lattice_magnetization(lattice cristal);
 void lattice_data(lattice cristal, double *energy, double *magnet);

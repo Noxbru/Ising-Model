@@ -45,6 +45,8 @@ int main(int argc, const char *argv[])
     unsigned int i,j,k;
     unsigned int acept;
 
+    double probs[5];
+
     lattice a;
 
     //double energy, magnet;
@@ -59,6 +61,12 @@ int main(int argc, const char *argv[])
         pr_srand(time(NULL));
     else
         pr_srand(input.rand_init);
+
+    probs[0]=exp(input.beta*8);
+    probs[1]=exp(input.beta*4);
+    probs[2]=1;
+    probs[3]=exp(-input.beta*4);
+    probs[4]=exp(-input.beta*8);
 
     a=create_lattice(input.lat_size,input.flag);
     print_lattice(a);
@@ -75,7 +83,7 @@ int main(int argc, const char *argv[])
         for(j = 0; j < input.num_meas; j++)
         {
             for(k = 0; k < input.num_sweeps; k++)
-                acept+=evolve_lattice(&a,input.beta);
+                acept+=evolve_lattice(&a,probs);
 
             //energy=lattice_energy(a);
             //magnet=lattice_magnetization(a);

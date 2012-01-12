@@ -62,11 +62,11 @@ int main(int argc, const char *argv[])
 
     for(i = input.num_files_jump; i < input.num_files; i++)
     {
-        printf("%s\n",input.dir);
+        /*printf("%s\n",input.dir);
         printf("%u\n",input.lat_size);
-        printf("%.2lf\n",input.beta); /* este peta cuando i = input.num_files - input.num_files_jump */
+        printf("%.2lf\n",input.beta);  este peta cuando i = input.num_files - input.num_files_jump 
         printf("%03u\n",i);
-        printf("%s%u/%.2lf/%03u\n",input.dir,input.lat_size,input.beta,i);
+        printf("%s%u/%.2lf/%03u\n",input.dir,input.lat_size,input.beta,i);*/
         sprintf(file_name,"%s%u/%.2lf/%03u",input.dir,input.lat_size,input.beta,i);
         fin=fopen(file_name,"r");
         fread(energy_ptr+i*input.num_meas,sizeof(double),input.num_meas,fin);
@@ -147,10 +147,16 @@ int main(int argc, const char *argv[])
     suscept_mean_block/=num_blocks;
     suscept_mean2_block/=num_blocks;
 
+/*
     printf(" <E>  = %g ± %g\n",energy_mean,sqrt((energy_var-energy_mean*energy_mean)/num_blocks));
     printf("<|m|> = %g ± %g\n",magnet_mean,sqrt((magnet_var-magnet_mean*magnet_mean)/num_blocks));
     printf(" <Cv> = %g ± %g\n",heat_mean,sqrt((heat_mean2_block-heat_mean_block*heat_mean_block)/num_blocks));
     printf(" <X>  = %g ± %g\n",suscept_mean,sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
+*/
+    printf(" %g %g\t",energy_mean,sqrt((energy_var-energy_mean*energy_mean)/num_blocks));
+    printf(" %g %g\t",magnet_mean,sqrt((magnet_var-magnet_mean*magnet_mean)/num_blocks));
+    printf(" %g %g\t",heat_mean,sqrt((heat_mean2_block-heat_mean_block*heat_mean_block)/num_blocks));
+    printf(" %g %g\n",suscept_mean,sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
 
     //printf("%u %g %g %g %g\n",l,sqrt(energy_var-energy_mean*energy_mean)/sqrt(num_blocks),sqrt(magnet_var-magnet_mean*magnet_mean)/sqrt(num_blocks),
     //                          sqrt(heat_mean2_block-heat_mean_block*heat_mean_block)/sqrt(num_blocks),
