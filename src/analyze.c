@@ -51,13 +51,14 @@ int main(int argc, const char *argv[])
     size2=input.lat_size*input.lat_size;
     num_data=(input.num_files-input.num_files_jump)*input.num_meas;
     num_blocks=num_data/input.block_size;
-    num_data=num_blocks*input.block_size; // If we don't recalculate num_data, we can have problems dividing
 
     energy_ptr=malloc(num_data*sizeof(double));
     energy_hist=calloc(200,sizeof(unsigned int));
 
     magnet_ptr=malloc(num_data*sizeof(double));
     magnet_hist=calloc(200,sizeof(unsigned int));
+
+    num_data=num_blocks*input.block_size; // If we don't recalculate num_data, we can have problems dividing
 
     for(i = input.num_files_jump; i < input.num_files; i++)
     {
@@ -189,6 +190,7 @@ void print_data(input_data input, double *energy_dat, unsigned int *energy_hist,
     FILE *fout_energy, *fout_magnet;
 
     num_data=(input.num_files-input.num_files_jump)*input.num_meas;
+    num_data=(num_data/input.block_size)*input.block_size;
 
     sprintf(file_name,"%s%u/%.2lf/out_energy.dat",input.dir,input.lat_size,input.beta);
     fout_energy=fopen(file_name,"w");

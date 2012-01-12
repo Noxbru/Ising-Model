@@ -2,7 +2,6 @@ analyze
 cosa
 look
 simula
-init.cfg
 *.dat
 *.o
 data/
