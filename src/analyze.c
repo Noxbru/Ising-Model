@@ -49,7 +49,7 @@ int main(int argc, const char *argv[])
     //for(l=input.block_size;l<400;l++)
     //{
     size2=input.lat_size*input.lat_size;
-    num_data=(input.num_files-input.num_files_jump)*input.num_meas;
+    num_data=input.num_files*input.num_meas;
     num_blocks=num_data/input.block_size;
 
     energy_ptr=malloc(num_data*sizeof(double));
@@ -58,11 +58,18 @@ int main(int argc, const char *argv[])
     magnet_ptr=malloc(num_data*sizeof(double));
     magnet_hist=calloc(200,sizeof(unsigned int));
 
+    num_data=(input.num_files-input.num_files_jump)*input.num_meas;
+    num_blocks=num_data/input.block_size;
     num_data=num_blocks*input.block_size; // If we don't recalculate num_data, we can have problems dividing
 
     //===================================
     for(input.beta=0.1;input.beta<2;input.beta+=0.1)
     {
+    for(i = 0; i < 200; i++)
+    {
+        energy_hist[i]=0;
+        magnet_hist[i]=0;
+    }
     
     for(i = input.num_files_jump; i < input.num_files; i++)
     {
@@ -73,8 +80,8 @@ int main(int argc, const char *argv[])
         printf("%s%u/%.2lf/%03u\n",input.dir,input.lat_size,input.beta,i);*/
         sprintf(file_name,"%s%u/%.2lf/%03u",input.dir,input.lat_size,input.beta,i);
         fin=fopen(file_name,"r");
-        fread(energy_ptr+i*input.num_meas,sizeof(double),input.num_meas,fin);
-        fread(magnet_ptr+i*input.num_meas,sizeof(double),input.num_meas,fin);
+        fread(energy_ptr+(i-input.num_files_jump)*input.num_meas,sizeof(double),input.num_meas,fin);
+        fread(magnet_ptr+(i-input.num_files_jump)*input.num_meas,sizeof(double),input.num_meas,fin);
         fclose(fin);
     }
 
@@ -162,14 +169,14 @@ int main(int argc, const char *argv[])
     printf(" %g %g\t",magnet_mean,sqrt((magnet_var-magnet_mean*magnet_mean)/num_blocks));
     printf(" %g %g\t",heat_mean,sqrt((heat_mean2_block-heat_mean_block*heat_mean_block)/num_blocks));
     printf(" %g %g\n",suscept_mean,sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
-    }
 
     //printf("%u %g %g %g %g\n",l,sqrt(energy_var-energy_mean*energy_mean)/sqrt(num_blocks),sqrt(magnet_var-magnet_mean*magnet_mean)/sqrt(num_blocks),
     //                          sqrt(heat_mean2_block-heat_mean_block*heat_mean_block)/sqrt(num_blocks),
     //                          sqrt(suscept_mean2_block-suscept_mean_block*suscept_mean_block)/sqrt(num_blocks));
     //}
 
-    //print_data(input,energy_ptr,energy_hist,magnet_ptr,magnet_hist);
+    print_data(input,energy_ptr,energy_hist,magnet_ptr,magnet_hist);
+    }
 
     return 0;
 }
@@ -201,8 +208,7 @@ void print_data(input_data input, double *energy_dat, unsigned int *energy_hist,
     unsigned int num_data;
     FILE *fout_energy, *fout_magnet;
 
-    num_data=(input.num_files-input.num_files_jump)*input.num_meas;
-    num_data=(num_data/input.block_size)*input.block_size;
+    num_data=input.num_files*input.num_meas;
 
     sprintf(file_name,"%s%u/%.2lf/out_energy.dat",input.dir,input.lat_size,input.beta);
     fout_energy=fopen(file_name,"w");
@@ -230,4 +236,7 @@ void print_data(input_data input, double *energy_dat, unsigned int *energy_hist,
         fprintf(fout_energy,"%.2lf %g\n",(i/100.)-1,(double)energy_hist[i]/num_data);
         fprintf(fout_magnet,"%.2lf %g\n",(i/100.)-1,(double)magnet_hist[i]/num_data);
     }
+
+    fclose(fout_energy);
+    fclose(fout_magnet);
 }

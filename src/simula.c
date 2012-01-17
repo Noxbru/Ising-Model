@@ -69,6 +69,9 @@ int main(int argc, const char *argv[])
     for(input.beta=0.1;input.beta<2;input.beta+=0.1)
     {
 
+    /*a=create_lattice(input.lat_size,input.flag);
+    print_lattice(a);*/
+
     sprintf(command,"mkdir -p %s%u/%.2lf/",input.dir,input.lat_size,input.beta);
     system(command);
 
@@ -86,9 +89,10 @@ int main(int argc, const char *argv[])
             //output.magnet_ptr[j]=magnet;
             lattice_data(a,&output.energy_ptr[j],&output.magnet_ptr[j]);
         }
-        //printf("%lf\n",(double)acept/input.num_meas/input.num_sweeps/256);
+        //printf("%lf\n",(double)acept/input.num_meas/input.num_sweeps/(input.lat_size*input.lat_size));
         out_data(input,output,i);
     }
+    printf("%lf beta done\n",input.beta);
     }
 
     return 0;
