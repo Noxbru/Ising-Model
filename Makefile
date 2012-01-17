@@ -1,6 +1,5 @@
 CC = gcc
-CFLAGS = -Iscr -g -Wall -Wextra
-#-O2 -flto -march=native
+CFLAGS = -Iscr -g -Wall -Wextra -O2 -flto -march=native
 LDFLAGS = -lm
 OBJ_SIMULA = src/lattice.o src/simula.o src/parisi.o
 SRC_SIMULA = lattice.c simula.c parisi.c
