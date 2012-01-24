@@ -62,8 +62,8 @@ lattice create_lattice(unsigned int size, char flag)
     }
     a.offset_x[size-1]=-(size-1);
     a.offset_y[size-1]=-size2+size;
-    a.offset2_x[size-1]=(size-1);
-    a.offset2_y[size-1]=size2-size;
+    a.offset2_x[0]=(size-1);
+    a.offset2_y[0]=size2-size;
 
     return a;
 }

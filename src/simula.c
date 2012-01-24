@@ -60,17 +60,17 @@ int main(int argc, const char *argv[])
     else
         pr_srand(input.rand_init);
 
-    a=create_lattice(input.lat_size,input.flag);
-    print_lattice(a);
+    /*a=create_lattice(input.lat_size,input.flag);
+    print_lattice(a);*/
 
     output.energy_ptr=malloc(input.num_meas*sizeof(double));
     output.magnet_ptr=malloc(input.num_meas*sizeof(double));
 
-    for(input.beta=0.1;input.beta<2;input.beta+=0.1)
+    for(input.beta=0.2;input.beta<0.61;input.beta+=0.01)
     {
 
-    /*a=create_lattice(input.lat_size,input.flag);
-    print_lattice(a);*/
+    a=create_lattice(input.lat_size,input.flag);
+    print_lattice(a);
 
     sprintf(command,"mkdir -p %s%u/%.2lf/",input.dir,input.lat_size,input.beta);
     system(command);
